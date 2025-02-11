@@ -1,106 +1,116 @@
-const GITHUB_API_URL = "https://api.github.com/users";
+// const GITHUB_API_URL = "https://api.github.com/users";
 
-/**
- * Fetch a list of GitHub users starting from a random user ID.
- * @returns {Promise<any[]>} An array of GitHub user objects or an empty array on failure.
- */
-const searchGithub = async (): Promise<any[]> => {
-  try {
-    const token = import.meta.env.VITE_GITHUB_TOKEN;
+// interface Candidate {
+//   login: string;
+//   name: string;
+//   avatar_url: string;
+//   email: string;
+//   company: string;
+//   location: string;
+//   html_url: string;
+// }
 
-    if (!token) {
-      throw new Error("❌ GitHub API Token is missing! Check your .env file.");
-    }
+// /**
+//  * Fetch a list of GitHub users starting from a random user ID.
+//  * @returns {Promise<any[]>} An array of GitHub user objects or an empty array on failure.
+//  */
+// const searchGithub = async (): Promise<any[]> => {
+//   try {
+//     const token = import.meta.env.VITE_GITHUB_TOKEN;
 
-    const start = Math.floor(Math.random() * 100000000) + 1;
-    console.log(`🔍 Fetching GitHub users since ID: ${start}...`);
+//     if (!token) {
+//       throw new Error("❌ GitHub API Token is missing! Check your .env file.");
+//     }
 
-    const response = await fetch(`${GITHUB_API_URL}?since=${start}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        Accept: "application/vnd.github.v3+json",
-      },
-    });
+//     const start = Math.floor(Math.random() * 100000000) + 1;
+//     console.log(`🔍 Fetching GitHub users since ID: ${start}...`);
 
-    if (!response.ok) {
-      console.error(`⚠️ GitHub API Error ${response.status}: ${response.statusText}`);
+//     const response = await fetch(`${GITHUB_API_URL}?since=${start}`, {
+//       headers: {
+//         Authorization: `Bearer ${token}`,
+//         Accept: "application/vnd.github.v3+json",
+//       },
+//     });
 
-      if (response.status === 403) {
-        console.warn("🚨 API Rate Limit Exceeded. Try again later.");
-      }
-      if (response.status === 401) {
-        console.warn("⚠️ 401 Unauthorized: Check if your GitHub token is valid.");
-      }
+//     if (!response.ok) {
+//       console.error(`⚠️ GitHub API Error ${response.status}: ${response.statusText}`);
 
-      throw new Error(`Invalid API response: ${response.statusText}`);
-    }
+//       if (response.status === 403) {
+//         console.warn("🚨 API Rate Limit Exceeded. Try again later.");
+//       }
+//       if (response.status === 401) {
+//         console.warn("⚠️ 401 Unauthorized: Check if your GitHub token is valid.");
+//       }
 
-    const data = await response.json();
-    console.log("✅ Successfully fetched GitHub users:", data);
+//       throw new Error(`Invalid API response: ${response.statusText}`);
+//     }
 
-    return Array.isArray(data) ? data : [];
-  } catch (err) {
-    console.error("❌ Error fetching GitHub users:", err);
-    return [];
-  }
-};
+//     const data = await response.json();
+//     console.log("✅ Successfully fetched GitHub users:", data);
 
-/**
- * Fetch detailed information about a specific GitHub user.
- * @param {string} username - The GitHub username.
- * @returns {Promise<Candidate | null>} A Candidate object or null if an error occurs.
- */
-const searchGithubUser = async (username: string): Promise<Candidate | null> => {
-  try {
-    const token = import.meta.env.VITE_GITHUB_TOKEN;
+//     return Array.isArray(data) ? data : [];
+//   } catch (err) {
+//     console.error("❌ Error fetching GitHub users:", err);
+//     return [];
+//   }
+// };
 
-    if (!token) {
-      throw new Error("❌ GitHub API Token is missing! Check your .env file.");
-    }
+// /**
+//  * Fetch detailed information about a specific GitHub user.
+//  * @param {string} username - The GitHub username.
+//  * @returns {Promise<Candidate | null>} A Candidate object or null if an error occurs.
+//  */
+// const searchGithubUser = async (username: string): Promise<Candidate | null> => {
+//   try {
+//     const token = import.meta.env.VITE_GITHUB_TOKEN;
 
-    console.log(`🔍 Fetching details for user: ${username}...`);
+//     if (!token) {
+//       throw new Error("❌ GitHub API Token is missing! Check your .env file.");
+//     }
 
-    const response = await fetch(`${GITHUB_API_URL}/${username}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        Accept: "application/vnd.github.v3+json",
-      },
-    });
+//     console.log(`🔍 Fetching details for user: ${username}...`);
 
-    if (!response.ok) {
-      if (response.status === 404) {
-        console.warn(`⚠️ User ${username} not found (404). Skipping...`);
-        return null; // ✅ Skip this user and try another one
-      }
+//     const response = await fetch(`${GITHUB_API_URL}/${username}`, {
+//       headers: {
+//         Authorization: `Bearer ${token}`,
+//         Accept: "application/vnd.github.v3+json",
+//       },
+//     });
 
-      console.error(`⚠️ GitHub API Error ${response.status}: ${response.statusText}`);
+//     if (!response.ok) {
+//       if (response.status === 404) {
+//         console.warn(`⚠️ User ${username} not found (404). Skipping...`);
+//         return null; // ✅ Skip this user and try another one
+//       }
 
-      if (response.status === 403) {
-        console.warn("🚨 API Rate Limit Exceeded. Try again later.");
-      }
-      if (response.status === 401) {
-        console.warn("⚠️ 401 Unauthorized: Check if your GitHub token is valid.");
-      }
+//       console.error(`⚠️ GitHub API Error ${response.status}: ${response.statusText}`);
 
-      throw new Error(`Invalid API response for ${username}: ${response.statusText}`);
-    }
+//       if (response.status === 403) {
+//         console.warn("🚨 API Rate Limit Exceeded. Try again later.");
+//       }
+//       if (response.status === 401) {
+//         console.warn("⚠️ 401 Unauthorized: Check if your GitHub token is valid.");
+//       }
 
-    const data = await response.json();
-    console.log("✅ Successfully fetched user details:", data);
+//       throw new Error(`Invalid API response for ${username}: ${response.statusText}`);
+//     }
 
-    return {
-      login: data.login,
-      name: data.name || "No Name Available",
-      avatar_url: data.avatar_url || "",
-      email: data.email || "Email not provided",
-      company: data.company || "Company not listed",
-      location: data.location || "Location unknown",
-      html_url: data.html_url,
-    };
-  } catch (err) {
-    console.error(`❌ Error fetching details for user ${username}:`, err);
-    return null;
-  }
-};
+//     const data = await response.json();
+//     console.log("✅ Successfully fetched user details:", data);
 
-export { searchGithub, searchGithubUser };
+//     return {
+//       login: data.login,
+//       name: data.name || "No Name Available",
+//       avatar_url: data.avatar_url || "",
+//       email: data.email || "Email not provided",
+//       company: data.company || "Company not listed",
+//       location: data.location || "Location unknown",
+//       html_url: data.html_url,
+//     };
+//   } catch (err) {
+//     console.error(`❌ Error fetching details for user ${username}:`, err);
+//     return null;
+//   }
+// };
+
+// export { searchGithub, searchGithubUser };
