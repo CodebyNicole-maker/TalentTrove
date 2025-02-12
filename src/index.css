@@ -1,4 +1,4 @@
-/* @import url('https://fonts.googleapis.com/css2?family=Inter+Tight:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:wght@100..900&display=swap');
 
 :root {
   font-family: 'Inter Tight', system-ui, Avenir, Helvetica, Arial, sans-serif;
@@ -235,4 +235,4 @@ h1 {
 .card h2, 
 .card p {
   text-align: center;
-} */
+}
